@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +67,6 @@ public class BaseTestCase {
         }
         catch (Exception e) {
             log("当前服务器IP已设置为某个分店地址");
-
             driver.findElementById(MyMainPage.btn_logo).click();
             driver.findElementById(MyMainPage.btn_administrator).click();
             driver.findElementById(MyMainPage.et_pw).sendKeys(BasicData.administrator_pw);
