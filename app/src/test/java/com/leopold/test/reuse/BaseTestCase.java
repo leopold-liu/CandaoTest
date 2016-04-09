@@ -70,7 +70,20 @@ public class BaseTestCase {
             log("当前服务器IP已设置为某个分店地址");
 
             driver.findElementById(MyMainPage.btn_logo).click();
+            driver.findElementById(MyMainPage.btn_administrator).click();
+            driver.findElementById(MyMainPage.et_pw).sendKeys(BasicData.administrator_pw);
+            driver.findElementById(MyMainPage.btn_ok).click();
+            driver.findElementById(MyLoadingPage.et_ip1).clear();
+            driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
+            driver.findElementById(MyLoadingPage.et_ip2).clear();
+            driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
+            driver.findElementById(MyLoadingPage.et_ip3).clear();
+            driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
+            driver.findElementById(MyLoadingPage.et_ip4).clear();
+            driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
+            driver.findElementById(MyLoadingPage.btn_OK).click();
 
+            log("当前服务器IP已设置为"+BasicData.ip1+"."+BasicData.ip2+"."+BasicData.ip3+"."+BasicData.ip4);
         }
     }
 
@@ -121,23 +134,24 @@ public class BaseTestCase {
     }
 
     public void initDriver() throws MalformedURLException {
-        // set up driver
-        capabilities = new DesiredCapabilities();
-        capabilities.setCapability("deviceName", device_name);
-        capabilities.setCapability("appPackage", package_name);
-        capabilities.setCapability("appActivity", loading_activity);
-        capabilities.setCapability("unicodeKeyboard", "True");
-        capabilities.setCapability("resetKeyboard", "True");
+        // set up driver if it is null
+        if (null == driver) {
+            capabilities = new DesiredCapabilities();
+            capabilities.setCapability("deviceName", device_name);
+            capabilities.setCapability("appPackage", package_name);
+            capabilities.setCapability("appActivity", loading_activity);
+            capabilities.setCapability("unicodeKeyboard", "True");
+            capabilities.setCapability("resetKeyboard", "True");
 
-        driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+            driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
-        //timeouts
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            //timeouts
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-        //wait for candao.module.customer.CustomerActivity
-        wait = new WebDriverWait(driver,10);
-    }
-
+            //wait for candao.module.customer.CustomerActivity
+            wait = new WebDriverWait(driver, 10);
+            }
+        }
     public void takeScreenShot(){
         try {
             fos_screenshot.write(driver.getScreenshotAs(OutputType.BYTES));
@@ -287,7 +301,7 @@ public class BaseTestCase {
         try {
             driver.findElementByName(tab_name).click();
         } catch (Exception e){
-            while (exist==false) {
+            while (!exist) {
                 driver.swipe(centerTab.getX()+600,centerTab.getY(),centerTab.getX()-300,centerTab.getY(),1000);
                 List<MobileElement> list = driver.findElementById(MyMainPage.LL_TabBar)
                         .findElementsByClassName("android.widget.TextView");
@@ -319,13 +333,12 @@ public class BaseTestCase {
         try {
             driver.findElementByName(tab_name).click();
         } catch (Exception e){
-            while (exist==false) {
+            while (!exist) {
                 driver.swipe(centerTab.getX()+400,centerTab.getY(),centerTab.getX()-500,centerTab.getY(),1000);
                 List<MobileElement> list = driver.findElementById(MyMainPage.LL_TabBar)
                         .findElementsByClassName("android.widget.TextView");
-                Iterator<MobileElement> iterator = list.iterator();
-                while (iterator.hasNext()) {
-                    if (iterator.next().getText().equals(tab_name)) {
+                for (MobileElement aList : list) {
+                    if (aList.getText().equals(tab_name)) {
                         exist = true;
                         driver.findElementByName(tab_name).click();
                     }

@@ -17,6 +17,8 @@ public class BasicData {
     public static String cashier = "666";
     public static String manager = "001";
     public static String manager_pw = "123456";
+    public static String administrator_pw = "007";
+
 
     //桌号信息
     public static String table_name = "A1";

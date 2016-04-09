@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+  
+<suite name="Pad" verbose="1" >
+  <test name="smoke_test_detail_result" >
+    <packages>
+      <package name="com.leopold.test.smoketest"/>
+    </packages>
+  </test>
+  
+  <listeners>
+    <listener class-name="org.uncommons.reportng.HTMLReporter" />
+    <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+  </listeners>
+  
+</suite>
