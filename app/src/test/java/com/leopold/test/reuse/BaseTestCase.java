@@ -14,6 +14,7 @@ import org.testng.annotations.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -44,23 +45,39 @@ public class BaseTestCase {
     public File screenshot_file;
     public FileOutputStream fos_screenshot;
 
+    @BeforeTest (alwaysRun =true)
+    public void init() throws MalformedURLException {
+        initDriver();
+
+        try {
+            wait.until(new ExpectedCondition<WebElement>(){
+                @Override
+                public WebElement apply(WebDriver d) {
+                    return driver.findElementById(MyLoadingPage.tv_dialogText);
+                }});
+            driver.findElementById(MyLoadingPage.tv_dialogSure).click();
+            driver.findElementById(MyLoadingPage.et_ip1).clear();
+            driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
+            driver.findElementById(MyLoadingPage.et_ip2).clear();
+            driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
+            driver.findElementById(MyLoadingPage.et_ip3).clear();
+            driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
+            driver.findElementById(MyLoadingPage.et_ip4).clear();
+            driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
+            driver.findElementById(MyLoadingPage.btn_OK).click();
+        }
+        catch (Exception e) {
+            log("当前服务器IP已设置为某个分店地址");
+
+            driver.findElementById(MyMainPage.btn_logo).click();
+
+        }
+    }
+
     @BeforeClass (alwaysRun = true)
     public void setUp() throws Exception {
-        // set up appium
-        capabilities = new DesiredCapabilities();
-        capabilities.setCapability("deviceName", device_name);
-        capabilities.setCapability("appPackage", package_name);
-        capabilities.setCapability("appActivity", loading_activity);
-        capabilities.setCapability("unicodeKeyboard", "True");
-        capabilities.setCapability("resetKeyboard", "True");
 
-        driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
-
-        //timeouts
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
-        //wait for candao.module.customer.CustomerActivity
-        wait = new WebDriverWait(driver,10);
+        initDriver();
 
         try {
             wait.until(new ExpectedCondition<WebElement>(){
@@ -101,6 +118,24 @@ public class BaseTestCase {
         if (null != driver){
             driver.quit();
         }
+    }
+
+    public void initDriver() throws MalformedURLException {
+        // set up driver
+        capabilities = new DesiredCapabilities();
+        capabilities.setCapability("deviceName", device_name);
+        capabilities.setCapability("appPackage", package_name);
+        capabilities.setCapability("appActivity", loading_activity);
+        capabilities.setCapability("unicodeKeyboard", "True");
+        capabilities.setCapability("resetKeyboard", "True");
+
+        driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+
+        //timeouts
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        //wait for candao.module.customer.CustomerActivity
+        wait = new WebDriverWait(driver,10);
     }
 
     public void takeScreenShot(){

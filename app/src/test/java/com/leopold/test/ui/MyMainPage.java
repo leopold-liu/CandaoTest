@@ -12,6 +12,10 @@ public class MyMainPage {
     public static String btn_order = "com.kaiying.newspicyway:id/shopcart_bottom_right";//确认下单按钮
     public static String btn_ok = "com.kaiying.newspicyway:id/btn_sure";//确认按钮
     public static String btn_dialog_ok = "com.kaiying.newspicyway:id/order_common_dialog_cancel";//提示框确认按钮
+    public static String btn_administrator = "com.kaiying.newspicyway:id/btn_administrator";//管理员按钮
+    public static String btn_waiter = "com.kaiying.newspicyway:id/btn_waiter";//服务员按钮
+    public static String btn_restart = "com.kaiying.newspicyway:id/outsystem";//重启按钮
+
 
 
     //Edittext to use
