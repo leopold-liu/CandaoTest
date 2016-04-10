@@ -114,11 +114,11 @@ public class BaseTestCase {
         waitForActivity(main_activity);
 
         //init for take screenshot
-        screenshot_dir = new File(System.getProperty("user.dir")+"/build/test_report/screenshot");
+        screenshot_dir = new File(System.getProperty("user.dir")+"/test-output/html/screenshot");
         if (!screenshot_dir.isDirectory()){
             screenshot_dir.mkdirs();
         }
-        screenshot_file = new File(screenshot_dir,getClass().getSimpleName()+".png");
+        screenshot_file = new File(screenshot_dir,getClass().getPackage().getName()+"."+getClass().getSimpleName()+".png");
         fos_screenshot = new FileOutputStream(screenshot_file);
     }
 
