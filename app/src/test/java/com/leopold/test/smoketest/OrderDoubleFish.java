@@ -2,7 +2,6 @@ package com.leopold.test.smoketest;
 
 import junit.framework.Assert;
 
-import org.openqa.selenium.Point;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -10,9 +9,6 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.android.AndroidKeyCode;
 
 import com.leopold.test.reuse.BaseTestCase;
 import com.leopold.test.ui.MyMainPage;
@@ -35,15 +31,6 @@ public class OrderDoubleFish extends BaseTestCase {
     public void orderDoubleFish() throws IOException, InterruptedException {
         waitForActivity(main_activity);
         switchPage(tab_name,dish_name);
-//        switchTab(tab_name);
-//        log("点击菜品分类");
-//
-//        AndroidElement dish_image = driver.findElementById(MyMainPage.img_one_page);
-//        Point center = dish_image.getCenter();
-//        while (!(dish_name.equals(driver.findElementById(MyMainPage.tv_dish_name_one_page).getAttribute("text")))){
-//            //swipe from right to left
-//            driver.swipe(center.getX()+500,center.getY(),center.getX()-500,center.getY(),1000);
-//        }
         log("滑动翻页至创意双拼鱼锅");
 
         driver.findElementById(MyMainPage.btn_add).click();
@@ -77,7 +64,7 @@ public class OrderDoubleFish extends BaseTestCase {
         log("点击确定,加入购物车");
 
         driver.findElementById(MyMainPage.btn_YD).click();
-        driver.findElementById(MyMainPage.btn_dialog_ok).click();
+        driver.findElementById(MyMainPage.btn_order_dlg_ok).click();
         log("确认下单");
 
         //账单价格
@@ -89,8 +76,6 @@ public class OrderDoubleFish extends BaseTestCase {
         Assert.assertTrue(ZDJG==(GDJG1 + GDJG2 + YJG1 + YJG2));
         log("验证完毕");
 
-        driver.pressKeyCode(AndroidKeyCode.BACK);
-        log("返回菜谱页面");
     }
 
     @AfterClass (alwaysRun = true)

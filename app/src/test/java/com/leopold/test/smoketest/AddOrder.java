@@ -50,7 +50,7 @@ public class AddOrder extends BaseTestCase {
         log("点鱼锅");
 
         driver.findElementById(MyMainPage.btn_YD).click();
-        driver.findElementById(MyMainPage.btn_dialog_ok).click();
+        driver.findElementById(MyMainPage.btn_order_dlg_ok).click();
         log("确认下单");
 
         //账单价格
@@ -65,6 +65,11 @@ public class AddOrder extends BaseTestCase {
         driver.findElementByName("返回菜单").click();
         switchTab(tab_LC);
         driver.findElementById(MyMainPage.btn_add).click();
+        driver.findElementById(MyMainPage.btn_YD).click();
+        driver.findElementById(MyMainPage.btn_order_dlg_ok).click();
+        log("确认下单");
+        Assert.assertTrue(driver.findElementById(MyOrderPage.btn_JC).isDisplayed());
+
 }
     @AfterClass (alwaysRun = true)
     public void tearDown() throws Exception {

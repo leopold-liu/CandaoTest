@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import io.appium.java_client.android.AndroidElement;
 
 import com.leopold.test.reuse.BaseTestCase;
+import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MySearchPage;
 
 /**
@@ -20,10 +21,9 @@ public class SearchDish extends BaseTestCase {
     @Test
     public void search(){
         waitForActivity(main_activity);
-        driver.findElementByName("搜索").click();
-        AndroidElement search_text = driver.findElementById(MySearchPage.et_search);
-        search_text.click();
+        driver.findElementById(MyMainPage.LL_search).click();
         log("点击搜索按钮");
+        AndroidElement search_text = driver.findElementById(MySearchPage.et_search);
         search_text.sendKeys(keywords);
         log("搜索菜品");
 

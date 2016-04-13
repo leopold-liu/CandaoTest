@@ -29,6 +29,7 @@ import com.leopold.test.ui.MyLoadingPage;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MyOpenTablePage;
 import com.leopold.test.ui.MyServicePage;
+import com.leopold.test.util.Image;
 
 public class BaseTestCase {
     public String device_name = "7PAIKZGMVGOJOFIZ";
@@ -43,6 +44,7 @@ public class BaseTestCase {
     public File screenshot_dir;
     public File screenshot_file;
     public FileOutputStream fos_screenshot;
+    public Image image;
 
     @BeforeTest (alwaysRun =true)
     public void init() throws MalformedURLException {
@@ -55,6 +57,17 @@ public class BaseTestCase {
                     return driver.findElementById(MyLoadingPage.tv_dialogText);
                 }});
             driver.findElementById(MyLoadingPage.tv_dialogSure).click();
+        }
+        catch (Exception e) {
+            log("没有弹出获取数据失败的提示");
+        }
+
+        try {
+            wait.until(new ExpectedCondition<WebElement>(){
+                @Override
+                public WebElement apply(WebDriver d) {
+                    return driver.findElementById(MyLoadingPage.et_ip1);
+                }});
             driver.findElementById(MyLoadingPage.et_ip1).clear();
             driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
             driver.findElementById(MyLoadingPage.et_ip2).clear();
@@ -67,49 +80,34 @@ public class BaseTestCase {
         }
         catch (Exception e) {
             log("当前服务器IP已设置为某个分店地址");
-            driver.findElementById(MyMainPage.btn_logo).click();
-            driver.findElementById(MyMainPage.btn_administrator).click();
-            driver.findElementById(MyMainPage.et_pw).sendKeys(BasicData.administrator_pw);
-            driver.findElementById(MyMainPage.btn_ok).click();
-            driver.findElementById(MyLoadingPage.et_ip1).clear();
-            driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
-            driver.findElementById(MyLoadingPage.et_ip2).clear();
-            driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
-            driver.findElementById(MyLoadingPage.et_ip3).clear();
-            driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
-            driver.findElementById(MyLoadingPage.et_ip4).clear();
-            driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
-            driver.findElementById(MyLoadingPage.btn_OK).click();
-
-            log("当前服务器IP已设置为"+BasicData.ip1+"."+BasicData.ip2+"."+BasicData.ip3+"."+BasicData.ip4);
         }
+
+        //确保已清台
+        waitForActivity(main_activity);
+        toCloseTable();
+
+        //清台后更改IP
+        goHomepage();
+        driver.findElementById(MyMainPage.btn_logo).click();
+        driver.findElementById(MyMainPage.btn_administrator).click();
+        driver.findElementById(MyMainPage.et_pw).sendKeys(BasicData.administrator_pw);
+        driver.findElementById(MyMainPage.btn_ok).click();
+        driver.findElementById(MyLoadingPage.et_ip1).clear();
+        driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
+        driver.findElementById(MyLoadingPage.et_ip2).clear();
+        driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
+        driver.findElementById(MyLoadingPage.et_ip3).clear();
+        driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
+        driver.findElementById(MyLoadingPage.et_ip4).clear();
+        driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
+        driver.findElementById(MyLoadingPage.btn_OK).click();
+
+        log("当前服务器IP已设置为"+BasicData.ip1+"."+BasicData.ip2+"."+BasicData.ip3+"."+BasicData.ip4);
     }
 
     @BeforeClass (alwaysRun = true)
     public void setUp() throws Exception {
-
         initDriver();
-
-        try {
-            wait.until(new ExpectedCondition<WebElement>(){
-                @Override
-                public WebElement apply(WebDriver d) {
-                    return driver.findElementById(MyLoadingPage.tv_dialogText);
-                }});
-            driver.findElementById(MyLoadingPage.tv_dialogSure).click();
-            driver.findElementById(MyLoadingPage.et_ip1).clear();
-            driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
-            driver.findElementById(MyLoadingPage.et_ip2).clear();
-            driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
-            driver.findElementById(MyLoadingPage.et_ip3).clear();
-            driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
-            driver.findElementById(MyLoadingPage.et_ip4).clear();
-            driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
-            driver.findElementById(MyLoadingPage.btn_OK).click();
-        }
-        catch (Exception e) {
-            log("当前服务器IP地址已正确设置");
-        }
 
         waitForActivity(main_activity);
 
@@ -126,6 +124,17 @@ public class BaseTestCase {
     public void tearDown() throws Exception {
         takeScreenShot();
         fos_screenshot.close();
+        image = new Image(screenshot_file);
+        image.resize(20);
+        image.save();
+        toCloseTable();
+        if (null != driver){
+            driver.quit();
+        }
+    }
+
+    @AfterTest (alwaysRun = true)
+    public void end() throws Exception {
         if (null != driver){
             driver.quit();
         }
@@ -144,12 +153,13 @@ public class BaseTestCase {
             driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
             //timeouts
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
             //wait for candao.module.customer.CustomerActivity
-            wait = new WebDriverWait(driver, 10);
-            }
+            wait = new WebDriverWait(driver, 20);
         }
+    }
+
     public void takeScreenShot(){
         try {
             fos_screenshot.write(driver.getScreenshotAs(OutputType.BYTES));
@@ -163,11 +173,13 @@ public class BaseTestCase {
     }
 
     public void toOpenTable(){
-        waitForActivity(main_activity);
+        //切换到主页
+        goHomepage();
+
         try {
             //设置等待时间为2秒, 判断当前是否已经开台.
             driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
-            driver.findElementById(MyMainPage.tv_table);
+            Assert.assertTrue(driver.findElementById(MyMainPage.tv_table).isDisplayed());
             clickLogoBtn();
             returnDish();
             Thread.sleep(5000);
@@ -175,19 +187,38 @@ public class BaseTestCase {
         }catch (Exception e){
             openTable();
         }finally {
-            driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
         }
     }
 
     public void openTable(){
+        goHomepage();
         clickLogoBtn();
         driver.findElementById("com.kaiying.newspicyway:id/gv_chose_waiter").
                 findElementsById("com.kaiying.newspicyway:id/ll_waitergv").get(0).
                 findElementById("com.kaiying.newspicyway:id/waiter_name").click();
         org.testng.Reporter.log("开台页面选择服务员");
-        driver.findElementById("com.kaiying.newspicyway:id/et_service").click();
-        driver.tap(1,280,750,0);
-        log("开台页面选择餐台");
+
+        int i;
+        for (i = 0; i < 3; i++) {
+            try {
+                driver.findElementById("com.kaiying.newspicyway:id/et_service").click();
+                Thread.sleep(1000);
+                driver.tap(1, 280, 750, 0);
+                if (BasicData.table_name.equals(driver.findElementById("com.kaiying.newspicyway:id/et_service").getText())){
+                    i = 10;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        switch (i){
+            case 10: log("开台页面选择餐台成功");
+                break;
+            default:
+                break;
+        }
+
         driver.findElementById("com.kaiying.newspicyway:id/gallery_man").
                 findElementsByClassName("android.widget.LinearLayout").get(0).
                 findElementByName("8").click();
@@ -205,21 +236,22 @@ public class BaseTestCase {
     }
 
     public void toCloseTable(){
-        waitForActivity(main_activity);
+        goHomepage();
 
         try {
             //设置等待时间为2秒, 判断当前是否已经开台.
             driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
-            driver.findElementById(MyMainPage.tv_table);
+            Assert.assertTrue(driver.findElementById(MyMainPage.tv_table).isDisplayed());
             closeTable();
         }catch (Exception e){
             log("当前已清台");
         }finally {
-            driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
         }
     }
 
     public void closeTable() throws InterruptedException {
+        goHomepage();
         clickLogoBtn();
         returnDish();
         Thread.sleep(5000);
@@ -237,7 +269,7 @@ public class BaseTestCase {
         }catch (Exception e){
             log("验证清台成功");
         }finally {
-            driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
         }
     }
 
@@ -264,6 +296,16 @@ public class BaseTestCase {
         log("点击确认按钮");
     }
 
+    public void goHomepage(){
+        for (int i = 0; i < 5; i++){
+            if(main_activity.equals(driver.currentActivity())){
+                i = 5;
+            } else {
+                driver.pressKeyCode(AndroidKeyCode.BACK);
+            }
+        }
+    }
+
     public void waitForActivity(final String activity){
         wait.until(new ExpectedCondition<Boolean>(){
             @Override
@@ -288,61 +330,99 @@ public class BaseTestCase {
             }});
     }
 
-    public void switchPage(String tab_name,String dish_name){
-        waitForActivity(main_activity);
-
-        AndroidElement actionbar = driver.findElementById(MyMainPage.RL_ActionBar);
-        Point centerTab = actionbar.getCenter();
-
-        boolean exist = false;
-
-        try {
-            driver.findElementByName(tab_name).click();
-        } catch (Exception e){
-            while (!exist) {
-                driver.swipe(centerTab.getX()+600,centerTab.getY(),centerTab.getX()-300,centerTab.getY(),1000);
-                List<MobileElement> list = driver.findElementById(MyMainPage.LL_TabBar)
-                        .findElementsByClassName("android.widget.TextView");
-                while (list.iterator().hasNext()) {
-                    if (list.iterator().next().getText().equals(tab_name)) {
-                        exist = true;
-                        driver.findElementByName(tab_name).click();
-                    }
-                }
-            }
-        }
-        log("切换到指定菜品分类");
-
-        AndroidElement dish_image = driver.findElementById(MyMainPage.img_one_page);
-        Point centerImage = dish_image.getCenter();
-        while (!driver.findElementById(MyMainPage.tv_dish_name_one_page).getText().equals(dish_name)){
-            driver.swipe(centerImage.getX()+500,centerImage.getY(),centerImage.getX()-500,centerImage.getY(),1000);
-        }
-        log("滑动翻页至指定菜品");
-    }
-
     public void switchTab(String tab_name){
         waitForActivity(main_activity);
 
         AndroidElement actionbar = driver.findElementById(MyMainPage.RL_ActionBar);
         Point centerTab = actionbar.getCenter();
+        int i = 0;
 
-        boolean exist = false;
-        try {
-            driver.findElementByName(tab_name).click();
-        } catch (Exception e){
-            while (!exist) {
-                driver.swipe(centerTab.getX()+400,centerTab.getY(),centerTab.getX()-500,centerTab.getY(),1000);
+        for (i = 0; i < 5; i++) {
+            try {
+                driver.findElementByName(BasicData.first_tab_name).click();
+                i = 10;
+            } catch (Exception e) {
+                driver.swipe(centerTab.getX() - 500, centerTab.getY(), centerTab.getX() + 400, centerTab.getY(), 1000);
                 List<MobileElement> list = driver.findElementById(MyMainPage.LL_TabBar)
                         .findElementsByClassName("android.widget.TextView");
                 for (MobileElement aList : list) {
-                    if (aList.getText().equals(tab_name)) {
-                        exist = true;
-                        driver.findElementByName(tab_name).click();
+                    if (aList.getText().equals(BasicData.first_tab_name)) {
+                        driver.findElementByName(BasicData.first_tab_name).click();
+                        i = 10;
                     }
                 }
             }
         }
-        log("切换到指定菜品分类");
+
+        switch (i){
+            case 10:
+                log("切换到推荐页");
+                break;
+            default:
+                Assert.assertFalse(false,"未找到推荐页");
+                break;
+        }
+
+        for (i = 0; i < 5; i++) {
+            try {
+                driver.findElementByName(tab_name).click();
+                i = 10;
+            } catch (Exception e) {
+                driver.swipe(centerTab.getX() + 400, centerTab.getY(), centerTab.getX() - 500, centerTab.getY(), 1000);
+                List<MobileElement> list = driver.findElementById(MyMainPage.LL_TabBar)
+                        .findElementsByClassName("android.widget.TextView");
+                for (MobileElement aList : list) {
+                    if (aList.getText().equals(tab_name)) {
+                        driver.findElementByName(tab_name).click();
+                        i = 10;
+                    }
+                }
+            }
+        }
+
+        switch (i){
+            case 10:
+                log("切换到"+tab_name);
+                break;
+            default:
+                Assert.assertFalse(false,"未找到"+tab_name);
+                break;
+        }
     }
+
+    public void switchPage(String tab_name,String dish_name){
+        waitForActivity(main_activity);
+
+        //切换到指定分类
+        switchTab(tab_name);
+
+        Point center = new Point(BasicData.x/2,BasicData.y/2);
+        int i = 0;
+
+        for (i = 0; i < 20; i++){
+            try {
+                driver.findElementByName(dish_name);
+                i = 100;
+            } catch (Exception e) {
+                driver.swipe(center.getX() + 500, center.getY(), center.getX() - 500, center.getY(), 1000);
+                List<AndroidElement> list = driver.findElementsByClassName("android.widget.TextView");
+                for (AndroidElement aList : list) {
+                    if (aList.getText().equals(dish_name)) {
+                        driver.findElementByName(dish_name).click();
+                        i = 100;
+                    }
+                }
+            }
+        }
+
+        switch (i){
+            case 100:
+                log("切换到"+dish_name);
+                break;
+            default:
+                Assert.assertFalse(false,"未找到"+dish_name);
+                break;
+        }
+    }
+
 }

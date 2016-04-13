@@ -23,5 +23,11 @@ public class BasicData {
     //桌号信息
     public static String table_name = "A1";
 
+    //菜谱信息
+    public static String first_tab_name = "推荐";
+
+    //Pad信息
+    public static int x = 1536;
+    public static int y = 2048;
 
 }

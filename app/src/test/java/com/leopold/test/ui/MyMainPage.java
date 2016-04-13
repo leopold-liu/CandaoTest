@@ -11,7 +11,8 @@ public class MyMainPage {
     public static String btn_YD = "com.kaiying.newspicyway:id/customer_bottom_ok";//已点按钮
     public static String btn_order = "com.kaiying.newspicyway:id/shopcart_bottom_right";//确认下单按钮
     public static String btn_ok = "com.kaiying.newspicyway:id/btn_sure";//确认按钮
-    public static String btn_dialog_ok = "com.kaiying.newspicyway:id/order_common_dialog_cancel";//提示框确认按钮
+    public static String btn_order_dlg_ok = "com.kaiying.newspicyway:id/order_common_dialog_cancel";//订单提示框确认按钮
+    public static String btn_TC_dlg_ok = "com.kaiying.newspicyway:id/customer_dialog_cancel";//订单提示框确认按钮
     public static String btn_administrator = "com.kaiying.newspicyway:id/btn_administrator";//管理员按钮
     public static String btn_waiter = "com.kaiying.newspicyway:id/btn_waiter";//服务员按钮
     public static String btn_restart = "com.kaiying.newspicyway:id/outsystem";//重启按钮
@@ -41,4 +42,5 @@ public class MyMainPage {
     public static String LL_TabBar = "com.kaiying.newspicyway:id/horizontal_parent";//顶部菜品类别栏
     public static String RL_ActionBar = "com.kaiying.newspicyway:id/customer_top_parent";//整个顶部栏
     public static String LL_TCXZ = "com.kaiying.newspicyway:id/customer_dialog_middle";//套餐选择页面
+    public static String LL_search = "com.kaiying.newspicyway:id/recommend_default";//搜索栏
 }

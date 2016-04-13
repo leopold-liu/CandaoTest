@@ -8,9 +8,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.android.AndroidKeyCode;
-
 import com.leopold.test.reuse.BaseTestCase;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MyOrderPage;
@@ -47,34 +44,54 @@ public class OrderSetMeal extends BaseTestCase {
         //下翻
         Point center = driver.findElementById(MyMainPage.LL_TCXZ).getCenter();
         driver.swipe(center.getX(),center.getY()+490,center.getX(),center.getY()-400,1000);
+        Thread.sleep(500);
         driver.findElementByName(xiaoliao_name).click();
+        Thread.sleep(500);
 
         //下翻
         driver.swipe(center.getX(),center.getY()+490,center.getX(),center.getY()-400,1000);
+        Thread.sleep(500);
         driver.findElementByName(xiaoliao_name).click();
+        Thread.sleep(500);
 
         //下翻
         driver.swipe(center.getX(),center.getY()+490,center.getX(),center.getY()-400,1000);
+        Thread.sleep(500);
         driver.findElementByName(liangcai_name).click();
+        Thread.sleep(500);
 
         //下翻
         driver.swipe(center.getX(),center.getY()+490,center.getX(),center.getY()-400,1000);
+        Thread.sleep(500);
         driver.findElementByName(yinpin_name).click();
         log("套餐内容选择完毕");
 
-        driver.findElementByName("确定").click();
-        log("点击确定,加入购物车");
+        int i;
+        for (i = 0; i < 3; i++) {
+            try {
+                driver.findElementById(MyMainPage.btn_TC_dlg_ok).click();
+                if (driver.findElementById(MyMainPage.btn_YD).isDisplayed()){
+                    i = 10;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        switch (i){
+            case 10: log("点击确定,加入购物车成功");
+                break;
+            default:
+                break;
+        }
 
         driver.findElementById(MyMainPage.btn_YD).click();
-        driver.findElementById(MyMainPage.btn_dialog_ok).click();
+        driver.findElementById(MyMainPage.btn_order_dlg_ok).click();
         log("确认下单");
 
         //verify Result
         Assert.assertTrue(driver.findElementById(MyOrderPage.tv_ZDJG).isDisplayed());
         log("验证完毕");
 
-        driver.pressKeyCode(AndroidKeyCode.BACK);
-        log("返回菜谱页面");
     }
 
     @AfterClass (alwaysRun = true)

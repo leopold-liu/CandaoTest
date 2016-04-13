@@ -14,8 +14,6 @@ import com.leopold.test.reuse.BaseTestCase;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MyOrderPage;
 
-import io.appium.java_client.android.AndroidKeyCode;
-
 /**
  * Created by leopold on 2016/2/3.
  */
@@ -50,7 +48,7 @@ public class OrderDoubleUnit extends BaseTestCase {
         log("点击确定,加入购物车");
 
         driver.findElementById(MyMainPage.btn_YD).click();
-        driver.findElementById(MyMainPage.btn_dialog_ok).click();
+        driver.findElementById(MyMainPage.btn_order_dlg_ok).click();
         log("确认下单");
 
         //账单价格
@@ -64,8 +62,6 @@ public class OrderDoubleUnit extends BaseTestCase {
         Assert.assertTrue(ZDJG==(JG1 + JG2));
         log("验证完毕");
 
-        driver.pressKeyCode(AndroidKeyCode.BACK);
-        log("返回菜谱页面");
     }
 
     @AfterClass (alwaysRun = true)
