@@ -80,7 +80,6 @@ public class OrderDoubleFish extends BaseTestCase {
 
     @AfterClass (alwaysRun = true)
     public void tearDown() throws Exception {
-        toCloseTable();
         super.tearDown();
     }
 }

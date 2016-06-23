@@ -38,7 +38,7 @@ public class OrderDoubleUnit extends BaseTestCase {
 
         driver.findElementsById(MyMainPage.img_increase).get(0).click();
         driver.findElementsById(MyMainPage.img_increase).get(1).click();
-        log("选择双拼锅");
+        log("选择多计量单位");
 
         //获取小份和大份的价格
         int JG1 = Integer.parseInt(driver.findElementsById(MyMainPage.tv_price_fish).get(0).getAttribute("text"));
@@ -66,7 +66,6 @@ public class OrderDoubleUnit extends BaseTestCase {
 
     @AfterClass (alwaysRun = true)
     public void tearDown() throws Exception {
-        toCloseTable();
         super.tearDown();
     }
 }

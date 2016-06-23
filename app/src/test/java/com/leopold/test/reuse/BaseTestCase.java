@@ -29,6 +29,7 @@ import com.leopold.test.ui.MyLoadingPage;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MyOpenTablePage;
 import com.leopold.test.ui.MyServicePage;
+import com.leopold.test.ui.MySettingPage;
 import com.leopold.test.util.Image;
 
 public class BaseTestCase {
@@ -49,6 +50,9 @@ public class BaseTestCase {
     @BeforeTest (alwaysRun =true)
     public void init() throws MalformedURLException {
         initDriver();
+
+        //判断是否已经在Loading页面输入过IP地址,i=0代表没有输过,1代表输入过
+        int i = 0;
 
         try {
             wait.until(new ExpectedCondition<WebElement>(){
@@ -77,6 +81,8 @@ public class BaseTestCase {
             driver.findElementById(MyLoadingPage.et_ip4).clear();
             driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
             driver.findElementById(MyLoadingPage.btn_OK).click();
+            i = 1;
+            log("当前服务器IP已在Loading页设置为"+BasicData.ip1+"."+BasicData.ip2+"."+BasicData.ip3+"."+BasicData.ip4);
         }
         catch (Exception e) {
             log("当前服务器IP已设置为某个分店地址");
@@ -84,25 +90,23 @@ public class BaseTestCase {
 
         //确保已清台
         waitForActivity(main_activity);
-        toCloseTable();
-
-        //清台后更改IP
-        goHomepage();
-        driver.findElementById(MyMainPage.btn_logo).click();
-        driver.findElementById(MyMainPage.btn_administrator).click();
-        driver.findElementById(MyMainPage.et_pw).sendKeys(BasicData.administrator_pw);
-        driver.findElementById(MyMainPage.btn_ok).click();
-        driver.findElementById(MyLoadingPage.et_ip1).clear();
-        driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
-        driver.findElementById(MyLoadingPage.et_ip2).clear();
-        driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
-        driver.findElementById(MyLoadingPage.et_ip3).clear();
-        driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
-        driver.findElementById(MyLoadingPage.et_ip4).clear();
-        driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
-        driver.findElementById(MyLoadingPage.btn_OK).click();
-
-        log("当前服务器IP已设置为"+BasicData.ip1+"."+BasicData.ip2+"."+BasicData.ip3+"."+BasicData.ip4);
+        if (i == 0){
+            driver.findElementById(MyMainPage.btn_logo).click();
+            driver.findElementById(MyMainPage.btn_administrator).click();
+            driver.findElementById(MyMainPage.et_pw).sendKeys(BasicData.administrator_pw);
+            driver.findElementById(MyMainPage.btn_ok).click();
+            driver.findElementById(MySettingPage.btn_IP_Config).click();
+            driver.findElementById(MyLoadingPage.et_ip1).clear();
+            driver.findElementById(MyLoadingPage.et_ip1).sendKeys(BasicData.ip1);
+            driver.findElementById(MyLoadingPage.et_ip2).clear();
+            driver.findElementById(MyLoadingPage.et_ip2).sendKeys(BasicData.ip2);
+            driver.findElementById(MyLoadingPage.et_ip3).clear();
+            driver.findElementById(MyLoadingPage.et_ip3).sendKeys(BasicData.ip3);
+            driver.findElementById(MyLoadingPage.et_ip4).clear();
+            driver.findElementById(MyLoadingPage.et_ip4).sendKeys(BasicData.ip4);
+            driver.findElementById(MyLoadingPage.btn_OK).click();
+            log("当前服务器IP已在主页面设置为"+BasicData.ip1+"."+BasicData.ip2+"."+BasicData.ip3+"."+BasicData.ip4);
+        }
     }
 
     @BeforeClass (alwaysRun = true)
@@ -153,7 +157,7 @@ public class BaseTestCase {
             driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
             //timeouts
-            driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
             //wait for candao.module.customer.CustomerActivity
             wait = new WebDriverWait(driver, 20);
@@ -197,15 +201,15 @@ public class BaseTestCase {
         driver.findElementById("com.kaiying.newspicyway:id/gv_chose_waiter").
                 findElementsById("com.kaiying.newspicyway:id/ll_waitergv").get(0).
                 findElementById("com.kaiying.newspicyway:id/waiter_name").click();
-        org.testng.Reporter.log("开台页面选择服务员");
+        log("开台页面选择服务员");
 
         int i;
         for (i = 0; i < 3; i++) {
             try {
                 driver.findElementById("com.kaiying.newspicyway:id/et_service").click();
                 Thread.sleep(1000);
-                driver.tap(1, 280, 750, 0);
-                if (BasicData.table_name.equals(driver.findElementById("com.kaiying.newspicyway:id/et_service").getText())){
+                driver.tap(1, 220, 830, 0);
+                if (null!=(driver.findElementById("com.kaiying.newspicyway:id/et_service").getText())){
                     i = 10;
                 }
             } catch (Exception e) {
@@ -213,7 +217,9 @@ public class BaseTestCase {
             }
         }
         switch (i){
-            case 10: log("开台页面选择餐台成功");
+            case 11: log("开台页面选择餐台成功");
+                break;
+            case 4: log("餐台选择失败");
                 break;
             default:
                 break;
@@ -231,7 +237,7 @@ public class BaseTestCase {
         log("确认开台");
 
         //result verify
-        Assert.assertTrue(driver.findElementById(MyMainPage.tv_table).getAttribute("text").equals(BasicData.table_name));
+        Assert.assertTrue(driver.findElementById(MyMainPage.tv_table).isDisplayed());
         log("验证完毕");
     }
 

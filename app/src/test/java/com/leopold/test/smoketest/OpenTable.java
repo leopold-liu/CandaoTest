@@ -18,7 +18,6 @@ public class OpenTable extends BaseTestCase {
 
     @AfterClass (alwaysRun = true)
     public void tearDown() throws Exception {
-        toCloseTable();
         super.tearDown();
     }
 }
