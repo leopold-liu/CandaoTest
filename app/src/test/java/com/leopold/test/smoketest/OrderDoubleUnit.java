@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.leopold.test.reuse.BaseTestCase;
+import com.leopold.test.base.BaseTestCase;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MyOrderPage;
 
@@ -41,8 +41,20 @@ public class OrderDoubleUnit extends BaseTestCase {
         log("选择多计量单位");
 
         //获取小份和大份的价格
-        int JG1 = Integer.parseInt(driver.findElementsById(MyMainPage.tv_price_fish).get(0).getAttribute("text"));
-        int JG2 = Integer.parseInt(driver.findElementsById(MyMainPage.tv_price_fish).get(1).getAttribute("text"));
+        Pattern p = Pattern.compile("\\d+");
+        Matcher m;
+        int JG1;
+        int JG2;
+        String price1 = driver.findElementsById(MyMainPage.tv_price_fish).get(0).getAttribute("text");
+        String price2 = driver.findElementsById(MyMainPage.tv_price_fish).get(1).getAttribute("text");
+
+        m = p.matcher(price1);
+        m.find();
+        JG1 = Integer.parseInt(m.group());
+
+        m = p.matcher(price2);
+        m.find();
+        JG2 = Integer.parseInt(m.group());
 
         driver.findElementByName("确定").click();
         log("点击确定,加入购物车");
@@ -52,8 +64,6 @@ public class OrderDoubleUnit extends BaseTestCase {
         log("确认下单");
 
         //账单价格
-        Pattern p = Pattern.compile("\\d+");
-        Matcher m;
         m = p.matcher(driver.findElementById(MyOrderPage.tv_ZDJG).getAttribute("text"));
         m.find();
         int ZDJG = Integer.parseInt(m.group());

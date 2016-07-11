@@ -6,7 +6,7 @@ package com.leopold.test.ui;
 public class MyMainPage {
     //Buttons to use, SC=shopping_cart
     public static String btn_add = "com.kaiying.newspicyway:id/add_btn";//点菜加号按钮
-    public static String btn_logo = "com.kaiying.newspicyway:id/customer_top_icon";//开台按钮
+    public static String btn_logo = "com.kaiying.newspicyway:id/customer_top_number_box";//开台按钮
     public static String btn_reduce = "com.kaiying.newspicyway:id/reduce_btn";//减菜按钮
     public static String btn_YD = "com.kaiying.newspicyway:id/customer_bottom_ok";//已点按钮
     public static String btn_order = "com.kaiying.newspicyway:id/shopcart_bottom_right";//确认下单按钮

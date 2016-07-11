@@ -5,8 +5,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.android.AndroidKeyCode;
 
-import com.leopold.test.reuse.BaseTestCase;
+import com.leopold.test.base.BaseTestCase;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MySearchPage;
 
@@ -25,6 +26,7 @@ public class SearchDish extends BaseTestCase {
         log("点击搜索按钮");
         AndroidElement search_text = driver.findElementById(MySearchPage.et_search);
         search_text.sendKeys(keywords);
+        driver.pressKeyCode(AndroidKeyCode.ENTER);
         log("搜索菜品");
 
         //verify result

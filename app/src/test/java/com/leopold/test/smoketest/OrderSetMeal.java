@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import com.leopold.test.reuse.BaseTestCase;
+import com.leopold.test.base.BaseTestCase;
 import com.leopold.test.ui.MyMainPage;
 import com.leopold.test.ui.MyOrderPage;
 

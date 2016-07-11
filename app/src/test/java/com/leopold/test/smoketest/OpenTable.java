@@ -1,7 +1,7 @@
 package com.leopold.test.smoketest;
 
 
-import com.leopold.test.reuse.BaseTestCase;
+import com.leopold.test.base.BaseTestCase;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;

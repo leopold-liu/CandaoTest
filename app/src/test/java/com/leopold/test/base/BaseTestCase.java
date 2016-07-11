@@ -1,4 +1,4 @@
-package com.leopold.test.reuse;
+package com.leopold.test.base;
 
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +35,8 @@ import com.leopold.test.ui.MySettingPage;
 import com.leopold.test.util.Image;
 
 public class BaseTestCase {
-    public String device_name = "7PAIKZGMVGOJOFIZ";
+    public String udid;
+    public String port;
     public String package_name = "com.kaiying.newspicyway";
     public String loading_activity = "candao.module.loading.LoadingActivity";
     public String main_activity = "candao.module.customer.CustomerActivity";
@@ -47,8 +50,11 @@ public class BaseTestCase {
     public FileOutputStream fos_screenshot;
     public Image image;
 
-    @BeforeTest (alwaysRun =true)
-    public void init() throws MalformedURLException {
+    @Parameters({"port","udid"})
+    @BeforeTest (alwaysRun = true)
+    public void init(String port, String udid) throws MalformedURLException {
+        this.udid = udid;
+        port = port;
         initDriver();
 
         //判断是否已经在Loading页面输入过IP地址,i=0代表没有输过,1代表输入过
@@ -148,16 +154,17 @@ public class BaseTestCase {
         // set up driver if it is null
         if (null == driver) {
             capabilities = new DesiredCapabilities();
-            capabilities.setCapability("deviceName", device_name);
+            capabilities.setCapability("deviceName", udid);
+            capabilities.setCapability("udid", udid);
             capabilities.setCapability("appPackage", package_name);
             capabilities.setCapability("appActivity", loading_activity);
             capabilities.setCapability("unicodeKeyboard", "True");
-            capabilities.setCapability("resetKeyboard", "True");
+            capabilities.setCapability("resetKeyboard","True");
 
-            driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+            driver = new AndroidDriver<>(new URL("http://127.0.0.1:"+port+"/wd/hub"), capabilities);
 
             //timeouts
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
             //wait for candao.module.customer.CustomerActivity
             wait = new WebDriverWait(driver, 20);
