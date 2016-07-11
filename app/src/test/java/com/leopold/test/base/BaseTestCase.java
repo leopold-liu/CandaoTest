@@ -50,11 +50,22 @@ public class BaseTestCase {
     public FileOutputStream fos_screenshot;
     public Image image;
 
-    @Parameters({"port","udid"})
+    @Parameters({"port","bp","udid"})
     @BeforeTest (alwaysRun = true)
-    public void init(String port, String udid) throws MalformedURLException {
+    public void init(String port, String bp, String udid) throws MalformedURLException {
         this.udid = udid;
-        port = port;
+        this.port = port;
+
+        //测试开始前先关闭所有的Appium Server.
+        try {
+            Runtime.getRuntime().exec("taskkill /f /im appium*");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //创建新的Appium Server
+        new AppiumServer(port,bp,udid);
+
         initDriver();
 
         //判断是否已经在Loading页面输入过IP地址,i=0代表没有输过,1代表输入过
